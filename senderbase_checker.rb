@@ -3,18 +3,17 @@ require 'resolv'
 require 'ipaddr'
  
 SERVER = 'rf.senderbase.org'
+RESULTTXT='result.txt'
+result = []
 
-#iplist = open(ARGV.first, "r")
+unless ARGV.first
+	puts "usage: listfile"
+	exit 3
+end
 
-#unless iplist
-#	puts "usage: listfile"
-#	exit 3
-#end
-
-
-#for iprange in IPAddr.new(iplist)
-
-	iprange = IPAddr.new(ARGV.first) 
+for iplist in open(ARGV.first, "r")
+	
+	iprange = IPAddr.new(iplist) 
 		iprange.to_range.each do |ip|
 
 			ip = ip.to_string
@@ -28,11 +27,17 @@ SERVER = 'rf.senderbase.org'
 				response = resolver.getresource(ip.split('.').reverse.join('.') + '.' + SERVER, Resolv::DNS::Resource::IN::TXT)
 				reputation = response.strings.first.to_f
 				ptr = resolver.getname(ip).to_s
-				puts "#{reputation},#{ip},#{ptr}"
+				#puts "#{reputation},#{ip},#{ptr}"
+				result.push("#{reputation},#{ip},#{ptr}")
+				#p result.pop
 			rescue
 				next
 			end
 
 	end
+	#printf result
+	file = open(RESULTTXT,'w')
+	file.puts(result.sort!)
+	file.close()
 
-#end
+end
