@@ -31,7 +31,7 @@ for iplist in open(ARGV.first, "r")
 
 				score = response.strings.first.to_f
 				ptr = resolver.getname(ip).to_s
-				date = Time.now.strftime "%Y-%m=%d %H:%M:%S"
+				date = Time.now.strftime "%Y-%m-%d %H:%M:%S"
 
 				if score >= 1.5 then
 					status = 'Good'
@@ -49,7 +49,6 @@ for iplist in open(ARGV.first, "r")
 			end
 
 	end
-	#printf result
 	file = open(RESULTTXT,'w')
 	file.puts(result)
 	file.close()
