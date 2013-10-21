@@ -7,17 +7,11 @@ require 'mysql2'
 SERVER = 'rf.senderbase.org'
 DB = Mysql2::Client.new(:host => "localhost", :username => "sbchkr", :password => "password", :database => "senderbase_db")
 
-#test = DB.query('select iprange from senderbase_db.iplist')
-#p test
-
-#for iplist in DB.query("select iprange from senderbase_db.iplist")
-        
 DB.query("select iprange from senderbase_db.iplist").each do |iplist|
 
         iprange = IPAddr.new(iplist['iprange']) 
         iprange.to_range.each do |ip|
 
-			p ip
 			ip = ip.to_string
 			resolver = Resolv::DNS.new
 

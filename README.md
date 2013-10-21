@@ -1,7 +1,6 @@
-Memo
+ウンコード
 
 
-------------------
  how use
 ------------------
 
@@ -12,7 +11,6 @@ Memo
  10.0.0.0/8
 
 
-------------------
  install packeges
 ------------------
 
@@ -20,7 +18,6 @@ Memo
 
  # gem install mysql2
 
-------------------
  create database
 ------------------
 
@@ -32,14 +29,17 @@ Memo
 
  mysql> create table senderbase_db.result(ipaddr int(10) unsigned not null primary key, ptr tinytext , score float(3,1) , status tinytext , checkdate datetime );
 
-------------------
+ mysql> create table senderbase_db.iplist(iprange tinytext not null, primary key(iprange(18)));
+
+
  query
 ------------------
+
+ mysql> select iprange from senderbase_db.iplist;
 
  mysql> insert into senderbase_db.result values ( INET_ATON('ipaddr') , 'ptr' , 'score' , 'status' , 'date' );
 
  mysql> replace into senderbase_db.result values ( INET_ATON('ipaddr') , 'ptr' , 'score' , 'status' , 'date' );
 
  mysql> select inet_ntoa(ipaddr),ptr,score,status,checkdate  from senderbase_db.result;
-
 
