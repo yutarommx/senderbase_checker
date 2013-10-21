@@ -5,20 +5,19 @@ require 'ipaddr'
 require 'mysql2'
  
 SERVER = 'rf.senderbase.org'
-RESULTTXT='result.txt'
 DB = Mysql2::Client.new(:host => "localhost", :username => "sbchkr", :password => "password", :database => "senderbase_db")
-result = []
 
-unless ARGV.first
-	puts "usage: listfile"
-	exit 3
-end
+#test = DB.query('select iprange from senderbase_db.iplist')
+#p test
 
-for iplist in open(ARGV.first, "r")
-	
-	iprange = IPAddr.new(iplist) 
-		iprange.to_range.each do |ip|
+#for iplist in DB.query("select iprange from senderbase_db.iplist")
+        
+DB.query("select iprange from senderbase_db.iplist").each do |iplist|
 
+        iprange = IPAddr.new(iplist['iprange']) 
+        iprange.to_range.each do |ip|
+
+			p ip
 			ip = ip.to_string
 			resolver = Resolv::DNS.new
 
@@ -28,7 +27,6 @@ for iplist in open(ARGV.first, "r")
  
 			begin
 				response = resolver.getresource(ip.split('.').reverse.join('.') + '.' + SERVER, Resolv::DNS::Resource::IN::TXT)
-
 				score = response.strings.first.to_f
 				ptr = resolver.getname(ip).to_s
 				date = Time.now.strftime "%Y-%m-%d %H:%M:%S"
@@ -43,13 +41,9 @@ for iplist in open(ARGV.first, "r")
 
 				DB.query("replace into senderbase_db.result values (INET_ATON('#{ip}') , '#{ptr}' , '#{score}' , '#{status}' , '#{date}')")
 
-				result.push("#{ip},#{ptr},#{score},#{status},#{date}")
 			rescue
 				next
 			end
 
 	end
-	file = open(RESULTTXT,'w')
-	file.puts(result)
-	file.close()
 end
