@@ -36,7 +36,7 @@ DB.query("select iprange from senderbase_db.iplist").each do |iplist|
 				DB.query("replace into senderbase_db.result values (INET_ATON('#{ip}') , '#{ptr}' , '#{score}' , '#{status}' , '#{date}')")
 
 			rescue
-				next
+				DB.query("delete from senderbase_db.result where ipaddr = INET_ATON('#{ip}')")
 			end
 
 	end

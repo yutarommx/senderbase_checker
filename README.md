@@ -1,16 +1,5 @@
 ウンコード
 
-
- how use
-------------------
-
- # ./senderbase_checker.rb listfile
-
- # cat listfile
- 192.168.0.0/16
- 10.0.0.0/8
-
-
  install packeges
 ------------------
 
@@ -42,4 +31,28 @@
  mysql> replace into senderbase_db.result values ( INET_ATON('ipaddr') , 'ptr' , 'score' , 'status' , 'date' );
 
  mysql> select inet_ntoa(ipaddr),ptr,score,status,checkdate  from senderbase_db.result;
+
+ mysql> delete from senderbase_db.result where ipaddr = INET_ATON('ipaddr');
+
+ mysql> select count(*) from senderbase_db.result;
+
+
+ mysql> select count(*) from senderbase_db.result where status = 'Poor';
+
+ mysql> select count(*) from senderbase_db.result where status = 'Good';
+
+ mysql> select count(*) from senderbase_db.result where status = 'Neutral';
+
+
+how use
+------------------
+
+-create db
+
+-insert iprange
+
+-execute script
+
+ # ./senderbase_checker.rb
+
 
