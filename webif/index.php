@@ -37,14 +37,10 @@ if($rabel == 'status' && $param == 'good' && $order == 'reverse'){
   $sql = "select inet_ntoa(ipaddr),ptr,score,status,checkdate from $dbname.result where status = 'Good' order by score desc ,ipaddr";
 }
 if(!is_null($search)){
-  $sql = "select inet_ntoa(ipaddr),ptr,score,status,checkdate  from $dbname.result where ptr = '$search' or inet_ntoa(ipaddr) = '$search'";
+  $sql = "select inet_ntoa(ipaddr),ptr,score,status,checkdate from $dbname.result where ptr = '$search' or inet_ntoa(ipaddr) = '$search'";
 }
 
 $result = mysql_query($sql);
-//$allcnt = mysql_query("select count(*) from senderbase_db.result");
-//$goodcnt = mysql_query("select count(*) from senderbase_db.result where status = 'Good'");
-//$ntrlcnt = mysql_query("select count(*) from senderbase_db.result where status = 'Neutral'");
-//$poorcnt = mysql_query("select count(*) from senderbase_db.result where status = 'Poor'");
 
 if (!$result) {
     echo "DB Error, could not list tables\n";
@@ -52,11 +48,24 @@ if (!$result) {
     exit;
 }
 
+$allcntrow = mysql_query("select count(*) from $dbname.result");
+list($allcnt) = mysql_fetch_row($allcntrow);
+
+$goodcntrow = mysql_query("select count(*) from $dbname.result where status = 'Good'");
+list($goodcnt) = mysql_fetch_row($goodcntrow);
+
+$ntrlcntrow = mysql_query("select count(*) from $dbname.result where status = 'Neutral'");
+list($ntrlcnt) = mysql_fetch_row($ntrlcntrow);
+
+$poorcntrow = mysql_query("select count(*) from $dbname.result where status = 'Poor'");
+list($poorcnt) = mysql_fetch_row($poorcntrow);
+
+
 print <<<END
 <!DOCTYPE html>
 <html>
   <head>
-    <title>FATTOOLS : SenderBase Checker</title>
+    <title>SenderBase Checker</title>
     <link href="css/bootstrap.css" rel="stylesheet">
   </head>
   <body>
@@ -66,16 +75,17 @@ print <<<END
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container">
-          <a class="brand" href="./index.php">FATTOOLS : Senderbase Checker</a>
+        <a class="brand" href="./index.php">Senderbase Checker</a>
            <ul class="nav">
-            <li class="active"><a href="./index.php">All</a></li>
-            <li class="active"><a href="./index.php?rabel=status&param=good&order=forward">Good</a></li>
-            <li class="active"><a href="./index.php?rabel=status&param=neutral&order=forward">Neutral</a></li>
-            <li class="active"><a href="./index.php?rabel=status&param=poor&order=forward">Poor</a></li>
+            <li><a class="btn.btn-mini" href="./index.php">All : {$allcnt}</a></li>
+            <li><a class="btn.btn-mini btn-success" href="./index.php?rabel=status&param=good&order=forward">Good : {$goodcnt}</a></li>
+            <li><a class="btn.btn-mini btn-warning" href="./index.php?rabel=status&param=neutral&order=forward">Neutral : {$ntrlcnt}</a></li>
+            <li><a class="btn.btn-mini btn-danger" href="./index.php?rabel=status&param=poor&order=forward">Poor : {$poorcnt}</a></li>
            </ul>
-           <form class="navbar-search">
-             <input type="text" name="search" class="search-query" placeholder="HOSTNAME or IPADDR">
-           </form>
+
+        <form class="navbar-search">
+          <input type="text" name="search" class="search-query" placeholder="HOSTNAME or IPADDRESS">
+        </form>
       </div>
     </div>
   </div>
@@ -91,20 +101,26 @@ print <<<END
         "{$param}";
         "{$order}";
         "{$search}";
+        "{$allcnt}";
+        "{$goodcnt}";
+        "{$ntrlcnt}";
+        "{$poorcnt}";
         </pre>
       </div>
 
       <div class="row">
         <div "span12" style="background-color: white;">
-          <table class="table">
+          <table class="table table-striped">
+            <thead>
             <tr>
-              <td>IP Address</td>
-              <td>Hostname</td>
-              <td>Reputation Score</td>
-              <td>Status</td>
-              <td>Last upate</td>
-              <td>senderbase.org</td>
+              <td><strong>IP Address</strong></td>
+              <td><strong>Hostname</strong></td>
+              <td><strong>Reputation Score</strong></td>
+              <td><strong>Status</strong></td>
+              <td><strong>Update</strong></td>
+              <td><strong></strong></td>
             </tr>
+            </thead>
 END;
 
 while ($row = mysql_fetch_row($result)) {
@@ -116,7 +132,7 @@ print <<<END
               <td>{$row[3]}</td>
               <td>{$row[4]}</td>
               <td>
-                <span class="btn"><a href="http://www.senderbase.org/lookup?search_string={$row[0]}" target="_blank">Check now</a></span>
+                <span class="btn"><a href="http://www.senderbase.org/lookup?search_string={$row[0]}" target="_blank">SenderBase</a></span>
               </td>
             </tr>
 END;
@@ -134,5 +150,9 @@ print <<<END
 </html>
 END;
 
+mysql_free_result($allcnt);
+mysql_free_result($goodcnt);
+mysql_free_result($ntrlcnt);
+mysql_free_result($poorcnt);
 mysql_free_result($result);
 ?>
