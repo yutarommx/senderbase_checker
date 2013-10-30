@@ -4,7 +4,7 @@ require 'resolv'
 require 'ipaddr'
 require 'mysql2'
  
-SERVER = 'rf.senderbase.org'
+SERVER = 'rf.senderbase.org.'
 DB = Mysql2::Client.new(:host => "localhost", :username => "sbchkr", :password => "password", :database => "senderbase_db")
 
 DB.query("select iprange from senderbase_db.iplist").each do |iplist|
