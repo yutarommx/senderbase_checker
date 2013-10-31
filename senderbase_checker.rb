@@ -25,7 +25,7 @@ DB.query("select iprange from senderbase_db.iplist").each do |iplist|
 				ptr = resolver.getname(ip).to_s
 				date = Time.now.strftime "%Y-%m-%d %H:%M:%S"
 
-				if score >= 1.5 then
+				if score >= 1.0 then
 					status = 'Good'
 				elsif score <= -2.0 then
 					status = 'Poor'
