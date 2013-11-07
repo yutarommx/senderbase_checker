@@ -37,7 +37,7 @@ if($rabel == 'status' && $param == 'good' && $order == 'reverse'){
   $sql = "select inet_ntoa(ipaddr),ptr,score,status,checkdate from $dbname.result where status = 'Good' order by score desc ,ipaddr";
 }
 if(!is_null($search)){
-  $sql = "select inet_ntoa(ipaddr),ptr,score,status,checkdate from $dbname.result where ptr = '$search' or inet_ntoa(ipaddr) = '$search'";
+  $sql = "select inet_ntoa(ipaddr),ptr,score,status,checkdate from $dbname.result where ptr REGEXP '.*$search.*' or  inet_ntoa(ipaddr) REGEXP '.*$search.*'";
 }
 
 $result = mysql_query($sql);
@@ -77,12 +77,12 @@ print <<<END
       <div class="container">
         <a class="brand" href="./index.php">Senderbase Checker</a>
            <ul class="nav">
-            <li><a class="btn.btn-mini" href="./index.php">All : {$allcnt}</a></li>
+            <li><a class="btn.btn-mini btn-primary" href="./index.php">All : {$allcnt}</a></li>
             <li><a class="btn.btn-mini btn-success" href="./index.php?rabel=status&param=good&order=forward">Good : {$goodcnt}</a></li>
             <li><a class="btn.btn-mini btn-warning" href="./index.php?rabel=status&param=neutral&order=forward">Neutral : {$ntrlcnt}</a></li>
             <li><a class="btn.btn-mini btn-danger" href="./index.php?rabel=status&param=poor&order=forward">Poor : {$poorcnt}</a></li>
+            <li><a class="btn.btn-mini btn-info" href="./csv.php?rabel={$rabel}&param={$param}&order={$order}"  target="_blank">GET CSV</a></li>
            </ul>
-
         <form class="navbar-search">
           <input type="text" name="search" class="search-query" placeholder="HOSTNAME or IPADDRESS">
         </form>
@@ -141,18 +141,18 @@ END;
 print <<<END
           </table>
         </div>
-
-
       </div>
-
+      <div id="footer">
+        <br>
+      </div>
     </div>
   </body>
 </html>
 END;
 
-mysql_free_result($allcnt);
-mysql_free_result($goodcnt);
-mysql_free_result($ntrlcnt);
-mysql_free_result($poorcnt);
+mysql_free_result($allcntrow);
+mysql_free_result($goodcntrow);
+mysql_free_result($ntrlcntrow);
+mysql_free_result($poorcntrow);
 mysql_free_result($result);
 ?>
